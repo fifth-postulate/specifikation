@@ -12,7 +12,12 @@ The `specifikation` library is not the only Kotlin library that can validate if 
 * [`kalidation`][library:kalidation]
 * [`valiktor`][library:valiktor]
 
+These are all great libraries. Unfortunately neither of these libraries fitted our needs. That in part was the motivation for creating this library, even though we are familiar with [xkcd:927][].
+
+![Fortunately, the charging one has been solved now that we've all standardized on mini-USB. Or is it micro-USB? Shit.](https://imgs.xkcd.com/comics/standards.png)
+
 [wikipedia:specification]: https://en.wikipedia.org/wiki/Specification_(technical_standard)
 [library:konform]: https://www.konform.io/
 [library:kalidation]: https://github.com/rcapraro/kalidation
 [library:valiktor]: https://github.com/valiktor/valiktor
+[xkcd:927]: https://xkcd.com/927/
