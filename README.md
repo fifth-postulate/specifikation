@@ -5,6 +5,18 @@ A [specification][wikipedia:specification]
 
 > refers to a set of documented requirements to be satisfied by a material, design, product, or service. A specification is often a type of technical standard. 
 
+## Usage
+We would like to use the `specifikation` library to validate objects as follows. Let's say we have created a `Specification<Person>` and a candidate `Person` object.
+
+```kotlin
+val report: Report<Person> = specification.isMetBy(person)
+
+when (report) {
+  is PassedSpecification { validatedPerson = report.subject }
+  is ViolatedSpecification { violations = report.violations }
+}
+```
+
 ## Prior Art
 The `specifikation` library is not the only Kotlin library that can validate if an object meets a specification. We are at least aware of, and have examined the following libraries.
 
