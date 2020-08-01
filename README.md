@@ -55,5 +55,5 @@ An object not meeting a specification is not exceptional for use. We receive obj
 [library:valiktor]: https://github.com/valiktor/valiktor
 [xkcd:927]: https://xkcd.com/927/
 [konform:impetus]: https://github.com/konform-kt/konform/issues/4
-[kalidation:issue:4] https://github.com/rcapraro/kalidation/issues/4
+[kalidation:issue:4]: https://github.com/rcapraro/kalidation/issues/4
 [kotlin:sealed-class]: https://kotlinlang.org/docs/reference/sealed-classes.html
