@@ -21,3 +21,16 @@ class All<T>(vararg val specifications: Specification<T>): Specification<T> {
             .reduce { acc, report -> acc.combine(report) }
     }
 }
+
+class OneOf<T>(vararg val specifications: Specification<T>): Specification<T> {
+    override fun verify(subject: T): Report {
+        val partition = specifications.map { it.verify(subject) }
+            .partition { it is Success }
+
+        return if (partition.first.isNotEmpty()) {
+            partition.first.first()
+        } else {
+            partition.second.reduce { acc, report -> acc.combine(report) }
+        }
+    }
+}
