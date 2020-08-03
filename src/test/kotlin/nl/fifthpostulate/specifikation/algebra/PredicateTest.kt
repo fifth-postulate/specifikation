@@ -38,7 +38,6 @@ class PredicateTest {
         val report = specification.verify(subject)
 
         assertThat(report is Success).isTrue()
-
     }
 }
 

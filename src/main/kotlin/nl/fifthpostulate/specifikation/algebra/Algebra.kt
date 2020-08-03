@@ -14,3 +14,10 @@ data class Predicate<T>(val violation: String, val predicate: (T) -> Boolean) : 
 
 fun <T> ((T) -> Boolean).toSpecification(violation: String): Specification<T> =
     Predicate(violation, this)
+
+class All<T>(vararg val specifications: Specification<T>): Specification<T> {
+    override fun verify(subject: T): Report {
+        return specifications.map {it.verify(subject)}
+            .reduce { acc, report -> acc.combine(report) }
+    }
+}

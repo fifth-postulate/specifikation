@@ -10,8 +10,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation("org.assertj:assertj-core:3.16.1")
+    testImplementation("org.mockito:mockito-core:3.4.6")
     implementation(kotlin("stdlib-jdk8"))
 }
 
