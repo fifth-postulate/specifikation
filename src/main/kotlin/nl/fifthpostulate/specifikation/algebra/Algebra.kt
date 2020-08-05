@@ -2,12 +2,12 @@ package nl.fifthpostulate.specifikation.algebra
 
 import nl.fifthpostulate.specifikation.*
 
-data class Predicate<T>(val violation: String, val predicate: (T) -> Boolean) : Specification<T> {
+data class Predicate<T>(private val violation: String, private val predicate: (T) -> Boolean) : Specification<T> {
     override fun isMetBy(subject: T): Report {
         return if (predicate(subject)) {
             Success()
         } else {
-            Failure(listOf(violation))
+            Failure(violation)
         }
     }
 }
@@ -15,16 +15,18 @@ data class Predicate<T>(val violation: String, val predicate: (T) -> Boolean) : 
 fun <T> ((T) -> Boolean).toSpecification(violation: String): Specification<T> =
     Predicate(violation, this)
 
-class All<T>(vararg val specifications: Specification<T>) : Specification<T> {
+class All<T>(private vararg val specifications: Specification<T>) : Specification<T> {
     override fun isMetBy(subject: T): Report {
-        return specifications.map { it.isMetBy(subject) }
+        return specifications
+            .map { it.isMetBy(subject) }
             .reduce { acc, report -> acc.combine(report) }
     }
 }
 
-class OneOf<T>(vararg val specifications: Specification<T>) : Specification<T> {
+class OneOf<T>(private vararg val specifications: Specification<T>) : Specification<T> {
     override fun isMetBy(subject: T): Report {
-        val partition = specifications.map { it.isMetBy(subject) }
+        val partition = specifications
+            .map { it.isMetBy(subject) }
             .partition { it is Success }
 
         return if (partition.first.isNotEmpty()) {
@@ -35,7 +37,7 @@ class OneOf<T>(vararg val specifications: Specification<T>) : Specification<T> {
     }
 }
 
-class Not<T>(val specification: Specification<T>) : Specification<T> {
+data class Not<T>(private val specification: Specification<T>) : Specification<T> {
     override fun isMetBy(subject: T): Report {
         return when (specification.isMetBy(subject)) {
             is Success -> Failure(listOf("should not adhere to specification"))
@@ -44,7 +46,7 @@ class Not<T>(val specification: Specification<T>) : Specification<T> {
     }
 }
 
-data class Fail<T>(val violation: String) : Specification<T> {
+data class Fail<T>(private val violation: String) : Specification<T> {
     override fun isMetBy(subject: T): Report {
         return Failure(listOf(violation))
     }

@@ -14,6 +14,7 @@ class Success : Report() {
 }
 
 data class Failure(val violations: Collection<String>): Report() {
+    constructor(vararg violations: String): this(violations.toList())
     override fun combine(other: Report): Report {
         return when (other) {
             is Success -> this
