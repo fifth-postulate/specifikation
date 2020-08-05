@@ -15,14 +15,14 @@ data class Predicate<T>(val violation: String, val predicate: (T) -> Boolean) : 
 fun <T> ((T) -> Boolean).toSpecification(violation: String): Specification<T> =
     Predicate(violation, this)
 
-class All<T>(vararg val specifications: Specification<T>): Specification<T> {
+class All<T>(vararg val specifications: Specification<T>) : Specification<T> {
     override fun verify(subject: T): Report {
-        return specifications.map {it.verify(subject)}
+        return specifications.map { it.verify(subject) }
             .reduce { acc, report -> acc.combine(report) }
     }
 }
 
-class OneOf<T>(vararg val specifications: Specification<T>): Specification<T> {
+class OneOf<T>(vararg val specifications: Specification<T>) : Specification<T> {
     override fun verify(subject: T): Report {
         val partition = specifications.map { it.verify(subject) }
             .partition { it is Success }
@@ -32,5 +32,26 @@ class OneOf<T>(vararg val specifications: Specification<T>): Specification<T> {
         } else {
             partition.second.reduce { acc, report -> acc.combine(report) }
         }
+    }
+}
+
+class Not<T>(val specification: Specification<T>) : Specification<T> {
+    override fun verify(subject: T): Report {
+        return when (specification.verify(subject)) {
+            is Success -> Failure(listOf("should not adhere to specification"))
+            is Failure -> Success()
+        }
+    }
+}
+
+data class Fail<T>(val violation: String) : Specification<T> {
+    override fun verify(subject: T): Report {
+        return Failure(listOf(violation))
+    }
+}
+
+class Succeed<T>(): Specification<T> {
+    override fun verify(subject: T): Report {
+        return Success()
     }
 }

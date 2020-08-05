@@ -2,9 +2,7 @@ package nl.fifthpostulate.specifikation.algebra
 
 import nl.fifthpostulate.specifikation.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import javax.security.auth.Subject
+import org.junit.jupiter.api.*
 
 
 class AllTest {
@@ -17,8 +15,7 @@ class AllTest {
 
     @Test
     fun `when all sub specifications succeed then all succeeds`() {
-        val succeed = Predicate<Person>("never occurs") { true }
-        val specification = All(succeed, succeed, succeed)
+        val specification: Specification<Person> = All(Succeed(), Succeed(), Succeed())
 
         val result = specification.verify(subject)
 
@@ -27,9 +24,7 @@ class AllTest {
 
     @Test
     fun `when one sub specifications fails then all fail`() {
-        val succeed = Predicate<Person>("never occurs") { true }
-        val fail = Predicate<Person>("violated") {false}
-        val specification = All(succeed, succeed, succeed, fail)
+        val specification: Specification<Person> = All(Succeed(), Succeed(), Succeed(), Fail("first"))
 
         val result = specification.verify(subject)
 
@@ -38,10 +33,7 @@ class AllTest {
 
     @Test
     fun `when failing violations are collected`() {
-        val succeed = Predicate<Person>("never occurs") { true }
-        val fail1 = Predicate<Person>("first") { false }
-        val fail2 = Predicate<Person>("second") { false }
-        val specification = All(succeed, fail1, succeed, succeed, fail2)
+        val specification: Specification<Person> = All(Succeed(), Fail("first"), Succeed(), Succeed(), Fail("second"))
 
         val result = specification.verify(subject)
 
