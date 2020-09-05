@@ -42,7 +42,7 @@ publishing {
         }
     }
     publications {
-        register("gpr") {
+        create<MavenPublication>("specifikation") {
             from(components["java"])
         }
     }
