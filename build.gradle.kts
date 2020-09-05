@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.3.72"
+    `maven-publish`
 }
 
 group = "nl.fifth-postulate"
@@ -27,10 +28,6 @@ tasks {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-plugins {
-    `maven-publish`
 }
 
 publishing {
