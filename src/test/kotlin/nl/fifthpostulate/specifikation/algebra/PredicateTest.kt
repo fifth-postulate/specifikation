@@ -41,7 +41,5 @@ class PredicateTest {
     }
 }
 
-data class Person(val name: String?)
-
 fun nameNotNull(subject: Person): Boolean =
     subject.name != null

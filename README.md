@@ -12,8 +12,8 @@ We would like to use the `specifikation` library to validate objects as follows.
 val report: Report<Person> = specification.isMetBy(person)
 
 when (report) {
-  is PassedSpecification { validatedPerson = report.subject }
-  is ViolatedSpecification { violations = report.violations }
+  is Success { /* person passed specification */ }
+  is Failure { violations = report.violations }
 }
 ```
 

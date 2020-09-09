@@ -6,10 +6,16 @@ interface Specification<T> {
 
 sealed class Report {
     abstract fun combine(other: Report): Report
+
+    abstract fun mapFailure(transform: (String) -> String): Report
 }
 class Success : Report() {
     override fun combine(other: Report): Report {
         return other
+    }
+
+    override fun mapFailure(transform: (String) -> String): Report {
+        return this
     }
 }
 
@@ -25,5 +31,11 @@ data class Failure(val violations: Collection<String>): Report() {
                 Failure(violations)
             }
         }
+    }
+
+    override fun mapFailure(transform: (String) -> String): Report {
+        val mappedViolations = violations
+            .map(transform)
+        return Failure(mappedViolations)
     }
 }
