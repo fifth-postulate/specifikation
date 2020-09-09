@@ -2,19 +2,6 @@ package nl.fifthpostulate.specifikation.algebra
 
 import nl.fifthpostulate.specifikation.*
 
-data class Predicate<T>(private val violation: String, private val predicate: (T) -> Boolean) : Specification<T> {
-    override fun isMetBy(subject: T): Report {
-        return if (predicate(subject)) {
-            Success()
-        } else {
-            Failure(violation)
-        }
-    }
-}
-
-fun <T> ((T) -> Boolean).toSpecification(violation: String): Specification<T> =
-    Predicate(violation, this)
-
 class All<T>(private vararg val specifications: Specification<T>) : Specification<T> {
     override fun isMetBy(subject: T): Report {
         return specifications

@@ -1,7 +1,8 @@
 package nl.fifthpostulate.specifikation.collection
 
 import nl.fifthpostulate.specifikation.*
-import nl.fifthpostulate.specifikation.algebra.*
+import nl.fifthpostulate.specifikation.base.nameNotNull
+import nl.fifthpostulate.specifikation.base.toSpecification
 import nl.fifthpostulate.specifikation.collection.All as AllForCollection
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
