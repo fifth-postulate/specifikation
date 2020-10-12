@@ -44,7 +44,7 @@ Rules in `kalidation` are subclasses of a [sealed][kotlin:sealed-class] class `C
 This robs us the oppertunity to specify rules specific to our domain.
 
 ### `valiktor`
-An object not meeting a specification is not exceptional for use. We receive objects in bulk, over the wire, from various sources. If a violation would be signaled by an exception, processing the collection would be difficult.
+An object not meeting a specification is not exceptional to us. We receive objects in bulk, over the wire, from various sources. If a violation would be signaled by an exception, processing the collection would be difficult.
 
 `valiktor` throws an `ConstraintViolationException` when an object does not meet a specification. Therefore it is not a nice fit.
 
