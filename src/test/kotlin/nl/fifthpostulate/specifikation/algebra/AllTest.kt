@@ -15,7 +15,7 @@ class AllTest {
 
     @Test
     fun `when all sub specifications succeed then all succeeds`() {
-        val specification: Specification<Person> = All(Succeed(), Succeed(), Succeed())
+        val specification: Specification<Person, String> = All(Succeed(), Succeed(), Succeed())
 
         val result = specification.isMetBy(subject)
 
@@ -24,7 +24,7 @@ class AllTest {
 
     @Test
     fun `when one sub specifications fails then all fail`() {
-        val specification: Specification<Person> = All(Succeed(), Succeed(), Succeed(), Fail("first"))
+        val specification: Specification<Person, String> = All(Succeed(), Succeed(), Succeed(), Fail("first"))
 
         val result = specification.isMetBy(subject)
 
@@ -33,7 +33,7 @@ class AllTest {
 
     @Test
     fun `when failing violations are collected`() {
-        val specification: Specification<Person> = All(Succeed(), Fail("first"), Succeed(), Succeed(), Fail("second"))
+        val specification: Specification<Person, String> = All(Succeed(), Fail("first"), Succeed(), Succeed(), Fail("second"))
 
         val result = specification.isMetBy(subject)
 

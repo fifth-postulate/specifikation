@@ -5,9 +5,9 @@ import nl.fifthpostulate.specifikation.Report
 import nl.fifthpostulate.specifikation.Specification
 import nl.fifthpostulate.specifikation.Success
 
-data class Predicate<T>(private val violation: String, private val predicate: (T) -> Boolean) :
-    Specification<T> {
-    override fun isMetBy(subject: T): Report {
+data class Predicate<T, V>(private val violation: V, private val predicate: (T) -> Boolean) :
+    Specification<T, V> {
+    override fun isMetBy(subject: T): Report<V> {
         return if (predicate(subject)) {
             Success()
         } else {
@@ -16,15 +16,13 @@ data class Predicate<T>(private val violation: String, private val predicate: (T
     }
 }
 
-fun <T> ((T) -> Boolean).toSpecification(violation: String): Specification<T> =
+fun <T, V> ((T) -> Boolean).toSpecification(violation: V): Specification<T, V> =
     Predicate(violation, this)
 
-data class View<S,T>(val specification: Specification<T>, val violationTransform: (String) -> String, val memberOf: (S) -> T): Specification<S> {
-    constructor(specification: Specification<T>, prefix: String, memberOf: (S) -> T): this(specification, {violation -> "$prefix$violation" }, memberOf)
-    override fun isMetBy(subject: S): Report {
+data class View<S,V,T,W>(val specification: Specification<T, W>, val violationTransform: (W) -> V, val memberOf: (S) -> T): Specification<S, V> {
+    override fun isMetBy(subject: S): Report<V> {
         return specification
             .isMetBy(memberOf(subject))
             .mapFailure(violationTransform)
     }
-
 }

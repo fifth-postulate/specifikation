@@ -15,8 +15,8 @@ class PredicateTest {
 
     @Test
     fun `when predicate succeeds specification succeeds`() {
-        val specification: Specification<Person> =
-            Predicate<Person>("name is not null") { it.name != null }
+        val specification: Specification<Person, String> =
+            Predicate("name is not null") { it.name != null }
 
         val report = specification.isMetBy(subject)
 
@@ -25,8 +25,8 @@ class PredicateTest {
 
     @Test
     fun `when predicate fails specification fails`() {
-        val specification: Specification<Person> =
-            Predicate<Person>("name is not null") { it.name != null }
+        val specification: Specification<Person, String> =
+            Predicate("name is not null") { it.name != null }
 
         val report = specification.isMetBy(Person(null))
 
@@ -35,7 +35,7 @@ class PredicateTest {
 
     @Test
     fun `specification can be made from a predicate`() {
-        val specification: Specification<Person> = ::nameNotNull.toSpecification("name is not null")
+        val specification: Specification<Person, String> = ::nameNotNull.toSpecification("name is not null")
 
         val report = specification.isMetBy(subject)
 

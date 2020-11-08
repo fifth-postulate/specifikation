@@ -15,7 +15,7 @@ class OneOfTest {
 
     @Test
     fun `when all sub specifications succeed then one of succeeds`() {
-        val specification: Specification<Person> = OneOf(Succeed(), Succeed(), Succeed())
+        val specification: Specification<Person, String> = OneOf(Succeed(), Succeed(), Succeed())
 
         val result = specification.isMetBy(subject)
 
@@ -24,7 +24,7 @@ class OneOfTest {
 
     @Test
     fun `when one sub specifications fails but other succeeds then one of succeeds`() {
-        val specification: Specification<Person> = OneOf(Fail("first"), Fail("second"), Succeed(), Fail("third"))
+        val specification: Specification<Person, String> = OneOf(Fail("first"), Fail("second"), Succeed(), Fail("third"))
 
         val result = specification.isMetBy(subject)
 
@@ -33,7 +33,7 @@ class OneOfTest {
 
     @Test
     fun `when failing violations are collected`() {
-        val specification: Specification<Person> = OneOf(Fail("first"), Fail("second"))
+        val specification: Specification<Person, String> = OneOf(Fail("first"), Fail("second"))
 
         val result = specification.isMetBy(subject)
 

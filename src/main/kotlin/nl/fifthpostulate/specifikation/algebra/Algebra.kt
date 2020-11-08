@@ -2,16 +2,16 @@ package nl.fifthpostulate.specifikation.algebra
 
 import nl.fifthpostulate.specifikation.*
 
-class All<T>(private vararg val specifications: Specification<T>) : Specification<T> {
-    override fun isMetBy(subject: T): Report {
+class All<T, V>(private vararg val specifications: Specification<T, V>) : Specification<T, V> {
+    override fun isMetBy(subject: T): Report<V> {
         return specifications
             .map { it.isMetBy(subject) }
-            .reduce { acc, report -> acc.combine(report) }
+            .reduce { acc, report -> acc.andThen {report} }
     }
 }
 
-class OneOf<T>(private vararg val specifications: Specification<T>) : Specification<T> {
-    override fun isMetBy(subject: T): Report {
+class OneOf<T, V>(private vararg val specifications: Specification<T, V>) : Specification<T, V> {
+    override fun isMetBy(subject: T): Report<V> {
         val partition = specifications
             .map { it.isMetBy(subject) }
             .partition { it is Success }
@@ -19,28 +19,28 @@ class OneOf<T>(private vararg val specifications: Specification<T>) : Specificat
         return if (partition.first.isNotEmpty()) {
             partition.first.first()
         } else {
-            partition.second.reduce { acc, report -> acc.combine(report) }
+            partition.second.reduce { acc, report -> acc.andThen {report} }
         }
     }
 }
 
-data class Not<T>(private val specification: Specification<T>) : Specification<T> {
-    override fun isMetBy(subject: T): Report {
+data class Not<T, V>(private val specification: Specification<T, V>) : Specification<T, V> {
+    override fun isMetBy(subject: T): Report<V> {
         return when (specification.isMetBy(subject)) {
-            is Success -> Failure(listOf("should not adhere to specification"))
+            is Success -> Failure(listOf()) // TODO message kind of failure
             is Failure -> Success()
         }
     }
 }
 
-data class Fail<T>(private val violation: String) : Specification<T> {
-    override fun isMetBy(subject: T): Report {
+data class Fail<T, V>(private val violation: V) : Specification<T, V> {
+    override fun isMetBy(subject: T): Report<V> {
         return Failure(listOf(violation))
     }
 }
 
-class Succeed<T>(): Specification<T> {
-    override fun isMetBy(subject: T): Report {
+class Succeed<T, V>(): Specification<T, V> {
+    override fun isMetBy(subject: T): Report<V> {
         return Success()
     }
 }

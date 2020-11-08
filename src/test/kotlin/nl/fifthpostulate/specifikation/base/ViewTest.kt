@@ -16,8 +16,8 @@ class ViewTest {
 
     @Test
     fun `when member specification succeeds view succeeds`() {
-        val specification: Specification<Person> =
-            View(String::isNotEmpty.toSpecification("is empty"), "name ") {  it.name ?: "" }
+        val specification: Specification<Person, String> =
+            View(String::isNotEmpty.toSpecification("is empty"), {"name $it"}) {  it.name ?: "" }
 
         val report = specification.isMetBy(subject)
 
@@ -26,8 +26,8 @@ class ViewTest {
 
     @Test
     fun `when predicate fails specification fails`() {
-        val specification: Specification<Person> =
-            View(String::isNotEmpty.toSpecification("is empty"), "name ") {  it.name ?: "" }
+        val specification: Specification<Person, String> =
+            View(String::isNotEmpty.toSpecification("is empty"), {"name $it"}) {  it.name ?: "" }
 
         val report = specification.isMetBy(Person(""))
 

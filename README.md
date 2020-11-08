@@ -6,10 +6,20 @@ A [specification][wikipedia:specification]
 > refers to a set of documented requirements to be satisfied by a material, design, product, or service. A specification is often a type of technical standard. 
 
 ## Usage
-We would like to use the `specifikation` library to validate objects as follows. Let's say we have created a `Specification<Person>` and a candidate `Person` object.
+A `Specification<Subject, Violation>` is an interface and implementors should implement the `isMetBy` method
 
 ```kotlin
-val report: Report<Person> = specification.isMetBy(person)
+    fun isMetBy(subject: Subject): Report<Violation>
+```
+
+an elment of type `Subject` is the subject under test and `Report<Violation>` serves as a report about if the subject under test successfully adheres to the specfication.
+
+`Report<Violation>` is a [sealed class][kotlin:sealed-class] having two subclasses: `Success` and `Failure`. The `Failure` constructor accepts a list of `Violation`s that can inform the client what why the subject under test does not adhere to the specification.
+
+We would like to use the `specifikation` library to validate objects as follows. Let's say we have created a `Specification<Person, String>` and a candidate `Person` object.
+
+```kotlin
+val report: Report<String> = specification.isMetBy(person)
 
 when (report) {
   is Success { /* person passed specification */ }
@@ -50,10 +60,11 @@ An object not meeting a specification is not exceptional to us. We receive objec
 
 
 [wikipedia:specification]: https://en.wikipedia.org/wiki/Specification_(technical_standard)
+[kotlin:sealed-class]: https://kotlinlang.org/docs/reference/sealed-classes.html
 [library:konform]: https://www.konform.io/
 [library:kalidation]: https://github.com/rcapraro/kalidation
 [library:valiktor]: https://github.com/valiktor/valiktor
 [xkcd:927]: https://xkcd.com/927/
 [konform:impetus]: https://github.com/konform-kt/konform/issues/4
 [kalidation:issue:4]: https://github.com/rcapraro/kalidation/issues/4
-[kotlin:sealed-class]: https://kotlinlang.org/docs/reference/sealed-classes.html
+

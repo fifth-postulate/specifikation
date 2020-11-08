@@ -9,7 +9,7 @@ import org.junit.jupiter.api.*
 
 class AllTest {
     lateinit var subjects: Collection<Person>
-    val specification: Specification<Person> = ::nameNotNull.toSpecification("name is null")
+    val specification: Specification<Person, String> = ::nameNotNull.toSpecification("name is null")
 
     @BeforeEach
     fun `create subjects under test`() {
@@ -21,7 +21,7 @@ class AllTest {
 
     @Test
     fun `when all sub specifications succeed then all succeeds`() {
-        val specification: Specification<Iterable<Person>> = AllForCollection(specification)
+        val specification = AllForCollection(specification)
 
         val result = specification.isMetBy(subjects)
 
@@ -30,7 +30,7 @@ class AllTest {
 
     @Test
     fun `when one sub specifications fails then all fail`() {
-        val specification: Specification<Iterable<Person>> = AllForCollection(specification)
+        val specification = AllForCollection(specification)
 
         val result = specification.isMetBy(listOf(Person(null)))
 
@@ -39,11 +39,11 @@ class AllTest {
 
     @Test
     fun `when failing violations are collected`() {
-        val specification: Specification<Iterable<Person>> = AllForCollection(specification)
+        val specification = AllForCollection(specification)
 
         val result = specification.isMetBy(listOf(Person(null), Person("Daan van Berkel"), Person(null)))
 
         assertThat(result is Failure).isTrue()
-        assertThat((result as Failure).violations).containsExactly("[0] name is null", "[2] name is null")
+        assertThat((result as Failure).violations).containsExactly(Pair(0,"name is null"), Pair(2, "name is null"))
     }
 }

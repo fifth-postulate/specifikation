@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 
 class OneOfTest {
     lateinit var subjects: Collection<Person>
-    val specification: Specification<Person> = ::nameNotNull.toSpecification("name is null")
+    val specification: Specification<Person, String> = ::nameNotNull.toSpecification("name is null")
 
     @BeforeEach
     fun `create subject under test`() {
@@ -22,7 +22,7 @@ class OneOfTest {
 
     @Test
     fun `when all sub specifications succeed then one of succeeds`() {
-        val specification: Specification<Iterable<Person>> = OneOfCollection(specification)
+        val specification = OneOfCollection(specification)
 
         val result = specification.isMetBy(subjects)
 
@@ -31,7 +31,7 @@ class OneOfTest {
 
     @Test
     fun `when one sub specifications fails but other succeeds then one of succeeds`() {
-        val specification: Specification<Iterable<Person>> = OneOfCollection(specification)
+        val specification = OneOfCollection(specification)
 
         val result = specification.isMetBy(listOf(Person(null), Person(null), Person("Daan van Berkel")))
 
@@ -40,12 +40,11 @@ class OneOfTest {
 
     @Test
     fun `when failing violations are collected`() {
-        val specification: Specification<Iterable<Person>> = OneOfCollection(specification)
+        val specification = OneOfCollection(specification)
 
         val result = specification.isMetBy(listOf(Person(null), Person(null), Person(null)))
 
         Assertions.assertThat(result is Failure).isTrue()
-        Assertions.assertThat((result as Failure).violations).containsExactly("[0] name is null", "[1] name is null", "[2] name is null")
+        Assertions.assertThat((result as Failure).violations).containsExactly(Pair(0, "name is null"), Pair(1, "name is null"), Pair(2, "name is null"))
     }
-
 }

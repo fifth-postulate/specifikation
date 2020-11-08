@@ -1,39 +1,40 @@
 package nl.fifthpostulate.specifikation
 
-interface Specification<Subject> {
-    fun isMetBy(subject: Subject): Report
+interface Specification<Subject, Violation> {
+    fun isMetBy(subject: Subject): Report<Violation>
 }
 
-sealed class Report {
-    abstract fun combine(other: Report): Report
+sealed class Report<Violation> {
+    abstract fun andThen(other: () -> Report<Violation>): Report<Violation>
 
-    abstract fun mapFailure(transform: (String) -> String): Report
+    abstract fun <U> mapFailure(transform: (Violation) -> U): Report<U>
 }
-class Success : Report() {
-    override fun combine(other: Report): Report {
-        return other
+class Success<Violation> : Report<Violation>() {
+    override fun andThen(other: () -> Report<Violation>): Report<Violation> {
+        return other()
     }
 
-    override fun mapFailure(transform: (String) -> String): Report {
-        return this
+    override fun <U> mapFailure(transform: (Violation) -> U): Report<U> {
+        return this as Report<U>
     }
 }
 
-data class Failure(val violations: Collection<String>): Report() {
-    constructor(vararg violations: String): this(violations.toList())
-    override fun combine(other: Report): Report {
-        return when (other) {
+data class Failure<Violation>(val violations: Collection<Violation>): Report<Violation>() {
+    constructor(vararg violations: Violation): this(violations.toList())
+    override fun andThen(other: () -> Report<Violation>): Report<Violation> {
+        val otherReport = other()
+        return when (otherReport) {
             is Success -> this
             is Failure -> {
-                val violations = mutableListOf<String>()
+                val violations = mutableListOf<Violation>()
                 violations.addAll(this.violations)
-                violations.addAll(other.violations)
+                violations.addAll(otherReport.violations)
                 Failure(violations)
             }
         }
     }
 
-    override fun mapFailure(transform: (String) -> String): Report {
+    override fun <U> mapFailure(transform: (Violation) -> U): Report<U> {
         val mappedViolations = violations
             .map(transform)
         return Failure(mappedViolations)

@@ -14,7 +14,7 @@ class NotTest {
 
     @Test
     fun `should invert report for success into failure`() {
-        val specification: Specification<Person> = Not(Succeed())
+        val specification: Specification<Person, String> = Not(Succeed())
 
         val result = specification.isMetBy(subject)
 
@@ -23,7 +23,7 @@ class NotTest {
 
     @Test
     fun `should invert report for failure into success`() {
-        val specification: Specification<Person> = Not(Fail("first"))
+        val specification: Specification<Person, String> = Not(Fail("first"))
 
         val result = specification.isMetBy(subject)
 
