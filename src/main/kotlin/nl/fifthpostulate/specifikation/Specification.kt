@@ -1,7 +1,7 @@
 package nl.fifthpostulate.specifikation
 
-interface Specification<T> {
-    fun isMetBy(subject: T): Report
+interface Specification<Subject> {
+    fun isMetBy(subject: Subject): Report
 }
 
 sealed class Report {
