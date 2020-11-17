@@ -19,10 +19,14 @@ data class Predicate<T, V>(private val violation: V, private val predicate: (T) 
 fun <T, V> ((T) -> Boolean).toSpecification(violation: V): Specification<T, V> =
     Predicate(violation, this)
 
-data class View<S,V,T,W>(val specification: Specification<T, W>, val violationTransform: (W) -> V, val memberOf: (S) -> T): Specification<S, V> {
+data class View<S,V,T,W>(val specification: Specification<T, W>, val violationTransform: (S, T, W) -> V, val memberOf: (S) -> T): Specification<S, V> {
+    constructor(specification: Specification<T, W>, violationTransform: (T, W) -> V, memberOf: (S) -> T): this(specification, {_, member, violation -> violationTransform(member, violation)}, memberOf)
+    constructor(specification: Specification<T, W>, violationTransform: (W) -> V, memberOf: (S) -> T): this(specification, {_, _, violation -> violationTransform(violation)}, memberOf)
+    constructor(specification: Specification<T, W>, violationTransform: () -> V, memberOf: (S) -> T): this(specification, {_, _, _ -> violationTransform()}, memberOf)
     override fun isMetBy(subject: S): Report<V> {
+        val member = memberOf(subject)
         return specification
-            .isMetBy(memberOf(subject))
-            .mapFailure(violationTransform)
+            .isMetBy(member)
+            .mapFailure {violation -> violationTransform(subject, member, violation)}
     }
 }
