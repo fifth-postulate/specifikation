@@ -1,7 +1,7 @@
 package nl.fifthpostulate.specifikation.base
 
 import nl.fifthpostulate.specifikation.*
-import org.assertj.core.api.Assertions.assertThat
+import nl.fifthpostulate.specifikation.assertions.ReportAssert.Companion.assertThat
 import org.junit.jupiter.api.*
 
 
@@ -20,7 +20,7 @@ class PredicateTest {
 
         val report = specification.isMetBy(subject)
 
-        assertThat(report is Success).isTrue()
+        assertThat(report).isSuccess()
     }
 
     @Test
@@ -30,7 +30,7 @@ class PredicateTest {
 
         val report = specification.isMetBy(Person(null))
 
-        assertThat(report is Failure).isTrue()
+        assertThat(report).isFailure()
     }
 
     @Test
@@ -39,7 +39,7 @@ class PredicateTest {
 
         val report = specification.isMetBy(subject)
 
-        assertThat(report is Success).isTrue()
+        assertThat(report).isSuccess()
     }
 }
 

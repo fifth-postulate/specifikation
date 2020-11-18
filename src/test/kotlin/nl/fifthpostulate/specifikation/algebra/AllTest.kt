@@ -1,7 +1,7 @@
 package nl.fifthpostulate.specifikation.algebra
 
 import nl.fifthpostulate.specifikation.*
-import org.assertj.core.api.Assertions.assertThat
+import nl.fifthpostulate.specifikation.assertions.ReportAssert.Companion.assertThat
 import org.junit.jupiter.api.*
 
 
@@ -17,27 +17,26 @@ class AllTest {
     fun `when all sub specifications succeed then all succeeds`() {
         val specification: Specification<Person, String> = All(Succeed(), Succeed(), Succeed())
 
-        val result = specification.isMetBy(subject)
+        val report = specification.isMetBy(subject)
 
-        assertThat(result is Success).isTrue()
+        assertThat(report).isSuccess()
     }
 
     @Test
     fun `when one sub specifications fails then all fail`() {
         val specification: Specification<Person, String> = All(Succeed(), Succeed(), Succeed(), Fail("first"))
 
-        val result = specification.isMetBy(subject)
+        val report = specification.isMetBy(subject)
 
-        assertThat(result is Failure).isTrue()
+        assertThat(report).isFailure()
     }
 
     @Test
     fun `when failing violations are collected`() {
         val specification: Specification<Person, String> = All(Succeed(), Fail("first"), Succeed(), Succeed(), Fail("second"))
 
-        val result = specification.isMetBy(subject)
+        val report = specification.isMetBy(subject)
 
-        assertThat(result is Failure).isTrue()
-        assertThat((result as Failure).violations).containsExactly("first", "second")
+        assertThat(report).isFailureWithViolations("first", "second")
     }
 }

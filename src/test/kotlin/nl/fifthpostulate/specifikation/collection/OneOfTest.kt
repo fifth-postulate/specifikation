@@ -1,12 +1,10 @@
 package nl.fifthpostulate.specifikation.collection
 
 import nl.fifthpostulate.specifikation.*
-import nl.fifthpostulate.specifikation.base.nameNotNull
-import nl.fifthpostulate.specifikation.base.toSpecification
+import nl.fifthpostulate.specifikation.assertions.ReportAssert.Companion.assertThat
+import nl.fifthpostulate.specifikation.base.*
 import nl.fifthpostulate.specifikation.collection.OneOf as OneOfCollection
-import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 
 class OneOfTest {
     lateinit var subjects: Collection<Person>
@@ -24,27 +22,26 @@ class OneOfTest {
     fun `when all sub specifications succeed then one of succeeds`() {
         val specification = OneOfCollection(specification)
 
-        val result = specification.isMetBy(subjects)
+        val report = specification.isMetBy(subjects)
 
-        Assertions.assertThat(result is Success).isTrue()
+        assertThat(report).isSuccess()
     }
 
     @Test
     fun `when one sub specifications fails but other succeeds then one of succeeds`() {
         val specification = OneOfCollection(specification)
 
-        val result = specification.isMetBy(listOf(Person(null), Person(null), Person("Daan van Berkel")))
+        val report = specification.isMetBy(listOf(Person(null), Person(null), Person("Daan van Berkel")))
 
-        Assertions.assertThat(result is Success).isTrue()
+        assertThat(report).isSuccess()
     }
 
     @Test
     fun `when failing violations are collected`() {
         val specification = OneOfCollection(specification)
 
-        val result = specification.isMetBy(listOf(Person(null), Person(null), Person(null)))
+        val report = specification.isMetBy(listOf(Person(null), Person(null), Person(null)))
 
-        Assertions.assertThat(result is Failure).isTrue()
-        Assertions.assertThat((result as Failure).violations).containsExactly(Pair(0, "name is null"), Pair(1, "name is null"), Pair(2, "name is null"))
+        assertThat(report).isFailureWithViolations(Pair(0, "name is null"), Pair(1, "name is null"), Pair(2, "name is null"))
     }
 }

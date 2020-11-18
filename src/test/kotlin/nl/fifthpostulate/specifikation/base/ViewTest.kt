@@ -1,10 +1,8 @@
 package nl.fifthpostulate.specifikation.base
 
 import nl.fifthpostulate.specifikation.*
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import nl.fifthpostulate.specifikation.assertions.ReportAssert.Companion.assertThat
+import org.junit.jupiter.api.*
 
 class ViewTest {
     lateinit var subject: Person
@@ -21,7 +19,7 @@ class ViewTest {
 
         val report = specification.isMetBy(subject)
 
-        assertThat(report is Success).isTrue()
+        assertThat(report).isSuccess()
     }
 
     @Test
@@ -31,52 +29,47 @@ class ViewTest {
 
         val report = specification.isMetBy(Person(""))
 
-        assertThat(report is Failure).isTrue()
-        assertThat((report as Failure).violations).containsExactly("name is empty")
+        assertThat(report).isFailureWithViolations("name is empty")
     }
 
     @Test
     fun `when predicate fails, violation transform without arguments can be used`() {
         val transform: () -> String = { "no arguments" }
         val specification: Specification<Person, String> =
-            View<Person, String, String, String>(String::isNotEmpty.toSpecification("is empty"), transform) { person: Person -> person.name ?: "" }
+            View(String::isNotEmpty.toSpecification("is empty"), transform) { person: Person -> person.name ?: "" }
 
         val report = specification.isMetBy(Person(""))
 
-        assertThat(report is Failure).isTrue()
-        assertThat((report as Failure).violations).containsExactly("no arguments")
+        assertThat(report).isFailureWithViolations("no arguments")
     }
 
     @Test
     fun `when predicate fails, violation transform with violation as argument can be used`() {
         val specification: Specification<Person, String> =
-            View<Person, String, String, String>(String::isNotEmpty.toSpecification("is empty"), { violation -> "name $violation" }) { it.name ?: "" }
+            View(String::isNotEmpty.toSpecification("is empty"), { violation -> "name $violation" }) { it.name ?: "" }
 
         val report = specification.isMetBy(Person(""))
 
-        assertThat(report is Failure).isTrue()
-        assertThat((report as Failure).violations).containsExactly("name is empty")
+        assertThat(report).isFailureWithViolations("name is empty")
     }
 
     @Test
     fun `when predicate fails, violation transform with member and violation as arguments can be used`() {
         val specification: Specification<Person, String> =
-            View<Person, String, String, String>(String::isNotEmpty.toSpecification("is empty"), {member, violation -> "name (\"$member\") $violation" }) { it.name ?: "" }
+            View(String::isNotEmpty.toSpecification("is empty"), {member, violation -> "name (\"$member\") $violation" }) { it.name ?: "" }
 
         val report = specification.isMetBy(Person(""))
 
-        assertThat(report is Failure).isTrue()
-        assertThat((report as Failure).violations).containsExactly("name (\"\") is empty")
+        assertThat(report).isFailureWithViolations("name (\"\") is empty")
     }
 
     @Test
     fun `when predicate fails, violation transform with subject, member and violation as arguments can be used`() {
         val specification: Specification<Person, String> =
-            View<Person, String, String, String>(String::isNotEmpty.toSpecification("is empty"), {subject, member, violation -> "[$subject] has name (\"$member\") that $violation" }) { it.name ?: "" }
+            View(String::isNotEmpty.toSpecification("is empty"), {subject, member, violation -> "[$subject] has name (\"$member\") that $violation" }) { it.name ?: "" }
 
         val report = specification.isMetBy(Person(""))
 
-        assertThat(report is Failure).isTrue()
-        assertThat((report as Failure).violations).containsExactly("[Person(name=)] has name (\"\") that is empty")
+        assertThat(report).isFailureWithViolations("[Person(name=)] has name (\"\") that is empty")
     }
 }

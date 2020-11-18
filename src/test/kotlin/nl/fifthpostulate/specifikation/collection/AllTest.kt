@@ -1,10 +1,9 @@
 package nl.fifthpostulate.specifikation.collection
 
 import nl.fifthpostulate.specifikation.*
-import nl.fifthpostulate.specifikation.base.nameNotNull
-import nl.fifthpostulate.specifikation.base.toSpecification
+import nl.fifthpostulate.specifikation.assertions.ReportAssert.Companion.assertThat
+import nl.fifthpostulate.specifikation.base.*
 import nl.fifthpostulate.specifikation.collection.All as AllForCollection
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 
 class AllTest {
@@ -23,27 +22,26 @@ class AllTest {
     fun `when all sub specifications succeed then all succeeds`() {
         val specification = AllForCollection(specification)
 
-        val result = specification.isMetBy(subjects)
+        val report = specification.isMetBy(subjects)
 
-        assertThat(result is Success).isTrue()
+        assertThat(report).isSuccess()
     }
 
     @Test
     fun `when one sub specifications fails then all fail`() {
         val specification = AllForCollection(specification)
 
-        val result = specification.isMetBy(listOf(Person(null)))
+        val report = specification.isMetBy(listOf(Person(null)))
 
-        assertThat(result is Failure).isTrue()
+        assertThat(report).isFailure()
     }
 
     @Test
     fun `when failing violations are collected`() {
         val specification = AllForCollection(specification)
 
-        val result = specification.isMetBy(listOf(Person(null), Person("Daan van Berkel"), Person(null)))
+        val report = specification.isMetBy(listOf(Person(null), Person("Daan van Berkel"), Person(null)))
 
-        assertThat(result is Failure).isTrue()
-        assertThat((result as Failure).violations).containsExactly(Pair(0,"name is null"), Pair(2, "name is null"))
+        assertThat(report).isFailureWithViolations(Pair(0,"name is null"), Pair(2, "name is null"))
     }
 }

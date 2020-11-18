@@ -1,7 +1,7 @@
 package nl.fifthpostulate.specifikation.algebra
 
 import nl.fifthpostulate.specifikation.*
-import org.assertj.core.api.Assertions
+import nl.fifthpostulate.specifikation.assertions.ReportAssert.Companion.assertThat
 import org.junit.jupiter.api.*
 
 class NotTest {
@@ -16,17 +16,17 @@ class NotTest {
     fun `should invert report for success into failure`() {
         val specification: Specification<Person, String> = Not(Succeed())
 
-        val result = specification.isMetBy(subject)
+        val report = specification.isMetBy(subject)
 
-        Assertions.assertThat(result is Failure).isTrue()
+        assertThat(report).isFailure()
     }
 
     @Test
     fun `should invert report for failure into success`() {
         val specification: Specification<Person, String> = Not(Fail("first"))
 
-        val result = specification.isMetBy(subject)
+        val report = specification.isMetBy(subject)
 
-        Assertions.assertThat(result is Success).isTrue()
+        assertThat(report).isSuccess()
     }
 }
