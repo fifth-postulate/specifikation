@@ -5,17 +5,18 @@ A [specification][wikipedia:specification]
 
 > refers to a set of documented requirements to be satisfied by a material, design, product, or service. A specification is often a type of technical standard. 
 
-## Usage
+## Design
 A `Specification<Subject, Violation>` is an interface and implementors should implement the `isMetBy` method
 
 ```kotlin
     fun isMetBy(subject: Subject): Report<Violation>
 ```
 
-an elment of type `Subject` is the subject under test and `Report<Violation>` serves as a report about if the subject under test successfully adheres to the specfication.
+an element of type `Subject` is the subject under test and `Report<Violation>` serves as a report about if the subject under test successfully adheres to the specification.
 
-`Report<Violation>` is a [sealed class][kotlin:sealed-class] having two subclasses: `Success` and `Failure`. The `Failure` constructor accepts a list of `Violation`s that can inform the client what why the subject under test does not adhere to the specification.
+`Report<Violation>` is a [sealed class][kotlin:sealed-class] having two subclasses: `Success` and `Failure`. The `Failure` constructor accepts a list of `Violation`s that can inform the client why the subject under test does not adhere to the specification.
 
+## Usage
 We would like to use the `specifikation` library to validate objects as follows. Let's say we have created a `Specification<Person, String>` and a candidate `Person` object.
 
 ```kotlin
